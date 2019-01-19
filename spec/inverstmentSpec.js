@@ -25,4 +25,18 @@ describe('investment', () => {
     it('should have cost', () => {
         expect(investment.cost).toEqual(2000);
     });
+
+    describe('when the price goes high', () => {
+        beforeEach(() => {
+            stock.sharePrice = 40;
+        });
+
+        it('should have positive roi', () => {
+            expect(investment.roi()).toEqual(1);
+        });
+
+        it('should be a good investment', () => {
+            expect(investment.isGood()).toBeTruthy();
+        });
+    });
 })
