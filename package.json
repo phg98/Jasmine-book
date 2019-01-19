@@ -1,0 +1,36 @@
+{
+  "name": "jasmine-book",
+  "version": "1.0.0",
+  "description": "jasmin book examples",
+  "main": "capture.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "sinon": "^7.2.3"
+  },
+  "devDependencies": {
+    "jasmine-core": "^3.3.0",
+    "karma": "^3.1.4",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^2.0.1"
+  },
+  "scripts": {
+    "test": "karma start",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phg98/Jasmine-book.git"
+  },
+  "keywords": [
+    "jasmine"
+  ],
+  "author": "Harry Park",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phg98/Jasmine-book/issues"
+  },
+  "homepage": "https://github.com/phg98/Jasmine-book#readme"
+}
