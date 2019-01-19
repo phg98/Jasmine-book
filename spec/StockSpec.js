@@ -13,19 +13,33 @@ describe('주식이 조회되면', () => {
         });
         */
 
+        /*
         var fetchRequest;
         xhr = sinon.useFakeXMLHttpRequest();
         xhr.onCreate = function (request) {
             fetchRequest = request;
         };
+        */
+        xhr = sinon.fakeServer.create();
+        xhr.respondWith(
+            '/stocks/AOUE',
+            [
+            200,
+            { "Content-Type": "application/json" },
+            '{ "sharePrice": 20.18}'
+        ]);
 
         stock.fetch(null, done);
 
+        xhr.respond();
+
+        /*
         fetchRequest.respond(
             200,
             { "Content-Type": "application/json" },
             '{ "sharePrice": 20.18}'
         );
+        */
     });
 
     afterEach(() => {
