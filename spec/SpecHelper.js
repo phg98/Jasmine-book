@@ -17,4 +17,4 @@ beforeEach(function () {
 });
 
 
-jasmine.getFixtures().fixturesPath = 'spec/fixtures';
+//jasmine.getFixtures().fixturesPath = 'spec/fixtures';

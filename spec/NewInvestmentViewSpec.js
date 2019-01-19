@@ -1,61 +1,152 @@
-describe('NewInvestmentView', () => {
-    beforeEach(() => {
-        loadFixtures('NewInverstmentView.html');
-        view = new NewInvestmentView({selector: '#new-investment'});
+describe("NewInvestmentView는", function() {
+    var view;
+  
+    beforeEach(function() {
+      loadFixtures('NewInvestmentView.html');
+  
+      view = new NewInvestmentView({
+        id: 'new-investment'
+      });
     });
-    
-    it('DOM 엘리먼트를 프로퍼티로 노출시켜야 한다.', () => {
-        expect(view.$el).toExist();
+  
+    it("DOM 엘리먼트를 프로퍼티로 노출시켜야 한다", function() {
+      expect(view.$el).toExist();
     });
-
-    it('빈 종목 코드를 가져야 한다.', () => {
-        expect(view.getSymbolInput()).toHaveValue('');
+  
+    xit("종목 코드를 입력받아야 한다", function() {
+      expect(view.$el.find('.new-investment-stock-symbol')).toBe('input[type=text]');
     });
-    
-    it('should input stock code', () => {
-        
+  
+    it("매수 수량을 입력받아야 한다", function() {
+      expect(view.$el).toContainHtml('<input type="number" class="new-investment-shares" name="shares" value="0">');
     });
-
-    it('should input buy share count', () => {
-        
+  
+    xit("매수 단가를 입력받아야 한다", function() {
+      expect(view.$el).toContain('input[type=number].new-investment-share-price');
     });
-
-    it('매수단가를 입력받아야 한다.', () => {
-        
-    });
-
-    /*
-    afterEach(() => {
-        $('#my-form').remove();
-    });
-    */
-});
-
-describe('InvestmentListView는', () => {
-    beforeEach(() => {
-        loadFixtures('NewInvestmentView.html');
-        appendLoadFixtures('InvestmentListView.html');
-
-        listView = new InvestmentListView({
-            id: 'investment-list'
+  
+    itShouldBeAtTheDefaultState();
+  
+    describe("입력 항목이 정확히 기재되었다면", function() {
+      beforeEach(function() {
+        view.$el.find('.new-investment-stock-symbol').val('AOUE').trigger('change');
+        view.$el.find('.new-investment-shares').val(100).trigger('change');
+        view.$el.find('.new-investment-share-price').val(20).trigger('change');
+      });
+  
+      it("추가할 수 있어야 한다", function() {
+        expect(view.$el.find('input[type=submit]')).not.toBeDisabled();
+      });
+  
+      it("입력받는대로 신규 투자를 생성할 수 있어야 한다", function() {
+        var newInvestment = view.create();
+        expect(newInvestment.stock.symbol).toEqual('AOUE');
+        expect(newInvestment.shares).toEqual(100);
+        expect(newInvestment.sharePrice).toEqual(20);
+      });
+  
+      describe("Add 버튼을 클릭했을 때", function() {
+        beforeEach(function() {
+          spyOnEvent(view.$el, 'submit');
+  
+          view.$el.find('input[type=submit]').click();
         });
-
-        view = new NewInvestmentView({
-            id: 'new-investment',
-            listView: listView
+  
+        it("폼이 전송되어야 한다", function() {
+          expect('submit').toHaveBeenTriggeredOn(view.$el);
         });
+      });
+  
+      describe("그리고 폼이 전송될 때", function() {
+        beforeEach(function() {
+          spyOn(view, 'create');
+          spyOnEvent(view.$el, 'submit');
+  
+          view.$el.submit();
+        });
+  
+        it("이벤트의 디폴트 행위는 금지되어야 한다", function() {
+          expect('submit').toHaveBeenPreventedOn(view.$el);
+        });
+  
+        it("신규 투자를 생성해야 한다", function() {
+          expect(view.create).toHaveBeenCalled();
+        });
+  
+        itShouldBeAtTheDefaultState();
+      });
+  
+      describe("그리고 신규 투자가 생성될 때", function() {
+        var callbackSpy;
+        var investment;
+  
+        beforeEach(function() {
+          callbackSpy = jasmine.createSpy('callback');
+          view.onCreate(callbackSpy);
+  
+          investment = view.create();
+        });
+  
+        it("investment를 파라미터로 onCreate 콜백 함수를 실행해야 한다", function() {
+          expect(callbackSpy).toHaveBeenCalled();
+          expect(callbackSpy).toHaveBeenCalledWith(investment);
+  
+          //expect(callbackSpy.wasCalled).toBeTruthy();
+          //expect(callbackSpy.mostRecentCall.args[0]).toBe(investment);
+        });
+      });
+  
+      describe("종목 코드 입력부가 초기화되었다면", function() {
+        beforeEach(function() {
+          view.$el.find('.new-investment-stock-symbol').val('').trigger('change');
+        });
+  
+        itShouldNotAllowToAdd();
+      });
+  
+      describe("매수 수량 입력부가 초기화되었다면", function() {
+        beforeEach(function() {
+          view.$el.find('.new-investment-shares').val('').trigger('change');
+        });
+  
+        itShouldNotAllowToAdd();
+      });
+  
+      describe("매수 단가 입력부가 초기화되었다면", function() {
+        beforeEach(function() {
+          view.$el.find('.new-investment-share-price').val('').trigger('change');
+        });
+  
+        itShouldNotAllowToAdd();
+      });
     });
-
-    describe('Add버튼을 클릭했을 때', () => {
-        beforeEach(() => {
-            // input 엘리먼트 내용을 채운다.
-            // 버튼을 클릭한 것처럼 처리한다.
-        });
-
-        it('투자 종목 리스트에 해당 건이 추가되어야 한다.', () => {
-            expect(listView.count()).toEqual(1);
-        });
-    });
-});
-
-//"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --allow-file-access-from-files
+  
+    // shared specs
+  
+    function itShouldNotAllowToAdd () {
+      it("더 이상 추가할 수 없다", function() {
+        expect(view.$el.find('input[type=submit]')).toBeDisabled();
+      });
+    }
+  
+    function itShouldBeAtTheDefaultState () {
+      it("빈 종목 코드를 가져야 한다", function() {
+        expect(view.getSymbol()).toEqual('');
+      });
+  
+      it("매수 수량이 0이어야 한다", function() {
+        expect(view.$el.find('.new-investment-shares')).toHaveValue('0');
+      });
+  
+      it("매수 단가가 0이어야 한다", function() {
+        expect(view.$el.find('.new-investment-share-price')).toHaveAttr('value', '0');
+      });
+  
+      it("종목 코드 입력부에 포커싱되어야 한다", function() {
+        expect(view.$el.find('.new-investment-stock-symbol')).toBeFocused();
+      });
+  
+      itShouldNotAllowToAdd();
+    }
+  });
+  
