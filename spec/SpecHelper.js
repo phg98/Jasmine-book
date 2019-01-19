@@ -1,12 +1,14 @@
 beforeEach(function () {
+  
   jasmine.addMatchers({
-    toBePlaying: function () {
+    toBeAGoodInvestment: function() {
       return {
         compare: function (actual, expected) {
-          var player = actual;
-
+          var investment = actual;
+          var what = this.isNot ? 'bad' : 'good';
           return {
-            pass: player.currentlyPlayingSong === expected && player.isPlaying
+              pass: investment.isGood(),
+              message: 'Expected investment to be a '+what+ ' investment'
           };
         }
       };

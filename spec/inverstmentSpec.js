@@ -36,7 +36,16 @@ describe('investment', () => {
         });
 
         it('should be a good investment', () => {
-            expect(investment.isGood()).toBeTruthy();
+            expect(investment).toBeAGoodInvestment();
+        });
+    });
+
+    describe('when the price goes down', () => {
+        beforeEach(() => {
+            stock.sharePrice = 0;
+        });
+        it('should be a bad investment', () => {
+            expect(investment).not.toBeAGoodInvestment();
         });
     });
 })
